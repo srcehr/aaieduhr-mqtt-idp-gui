@@ -1,0 +1,14 @@
+[APP]
+TITLE = AAI@EduHr mqtt Client v1.0
+THEME = united
+SIZE_X = 750
+SIZE_Y = 450
+
+[MQTT]
+BROKER = <broker_address>
+PORT = 1883
+CLIENT_ID = <client_ID>
+UID = <user_name>
+PWD = <password>
+TOPIC = <topic>
+

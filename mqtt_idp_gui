@@ -1,0 +1,328 @@
+#! /usr/bin/python3
+# Copyright Dubravko Penezić, 2023. 
+# Except specific files which bear a different mention, 
+# this programme is licensed under the EUPL-1.2 or later’.
+
+import paho.mqtt.client as mqtt #import the client1
+import ttkbootstrap as ttk
+from ttkbootstrap.constants import *
+import os
+import re
+import configparser
+from matplotlib.figure import Figure
+from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg, NavigationToolbar2Tk)
+
+class Win_GUI(ttk.Frame):
+
+  def __init__(self, master):
+    super().__init__(master, padding=20)
+    self.pack(fill=BOTH, expand=YES)
+
+
+    self.radius_ok = ttk.IntVar()
+    self.radius_fail = ttk.IntVar()
+    self.sso_ok = ttk.IntVar()
+    self.sso_fail = ttk.IntVar()
+    self.idp_name = ttk.StringVar()
+
+    self.title()
+    self.radius()
+    self.sso()
+
+  def title(self):
+    frame = ttk.Frame(master=self)
+    
+    frame.pack(fill=X,
+               pady=5)
+   
+    title_label = ttk.Label(master=frame,
+                         font="TkFixedFont 14",
+                         compound='text',
+                         anchor=ttk.CENTER,
+                         textvariable=self.idp_name)
+    title_label.pack(fill=X)
+    
+
+  def radius(self):
+    frame = ttk.Labelframe(master=self, 
+                           text='RADIUS', 
+                           padding=10)
+    frame.pack(side=TOP, 
+                    fill=BOTH, 
+                    expand=YES)
+
+    ok_label = ttk.Label(master=frame,
+                         bootstyle=(ttk.SUCCESS,ttk.INVERSE),
+                         compound='text',
+                         anchor=ttk.CENTER,
+                         text='   OK   ')
+    ok_label.grid(row = 0,
+                  rowspan = 1,
+                  column = 0,
+                  columnspan = 1,
+                  ipady=5, 
+                  ipadx=5)
+
+    fail_label = ttk.Label(master=frame,
+                           bootstyle=(ttk.DANGER, ttk.INVERSE),
+                           compound='text',
+                           anchor=ttk.CENTER,
+                           text='  FAIL  ')
+
+    fail_label.grid(row = 0,
+                    rowspan = 1,
+                    column = 1,
+                    columnspan = 1,
+                    ipady=5,
+                    ipadx=5)
+
+    ok_value = ttk.Label(master=frame,
+                         bootstyle=ttk.SUCCESS,
+                         compound='text',
+                         anchor=ttk.CENTER,
+                         textvariable=self.radius_ok)
+    ok_value.grid(row = 1,
+                  rowspan = 1,
+                  column = 0,
+                  columnspan = 1,
+                  ipady=5, 
+                  ipadx=5)
+
+    fail_value = ttk.Label(master=frame,
+                           bootstyle=ttk.DANGER,
+                           compound='text',
+                           anchor=ttk.CENTER,
+                           textvariable=self.radius_fail)
+    fail_value.grid(row = 1,
+                    rowspan = 1,
+                    column = 1,
+                    columnspan = 1,
+                    ipady=5, 
+                    ipadx=5)
+
+    graph = ttk.Labelframe(master=frame,
+                           text='History graph',
+                           padding=10)
+    graph.grid(row = 0,
+               rowspan = 3,
+               column = 3,
+               columnspan = 1,
+               pady=0,
+               padx=10)
+
+    self.radius_graph(graph)
+
+  def sso(self):
+    frame = ttk.Labelframe(master=self,
+                           text='SSO',
+                           padding=10)
+    frame.pack(side=TOP,
+                    fill=BOTH,
+                    expand=YES)
+
+    ok_label = ttk.Label(master=frame,
+                         bootstyle=(ttk.SUCCESS,ttk.INVERSE),
+                         compound='text',
+                         anchor=ttk.CENTER,
+                         text='   OK   ')
+    ok_label.grid(row = 0,
+                  rowspan = 1,
+                  column = 0,
+                  columnspan = 1,
+                  ipady=5,
+                  ipadx=5)
+
+    fail_label = ttk.Label(master=frame,
+                           bootstyle=(ttk.DANGER, ttk.INVERSE),
+                           compound='text',
+                           anchor=ttk.CENTER,
+                           text='  FAIL  ')
+
+    fail_label.grid(row = 0,
+                    rowspan = 1,
+                    column = 1,
+                    columnspan = 1,
+                    ipady=5,
+                    ipadx=5)
+
+    ok_value = ttk.Label(master=frame,
+                         bootstyle=ttk.SUCCESS,
+                         compound='text',
+                         anchor=ttk.CENTER,
+                         textvariable=self.sso_ok)
+    ok_value.grid(row = 1,
+                  rowspan = 1,
+                  column = 0,
+                  columnspan = 1,
+                  ipady=5,
+                  ipadx=5)
+
+    fail_value = ttk.Label(master=frame,
+                           bootstyle=ttk.DANGER,
+                           compound='text',
+                           anchor=ttk.CENTER,
+                           textvariable=self.sso_fail)
+    fail_value.grid(row = 1,
+                    rowspan = 1,
+                    column = 1,
+                    columnspan = 1,
+                    ipady=5,
+                    ipadx=5)
+
+    graph = ttk.Labelframe(master=frame,
+                           text='History graph',
+                           padding=10)
+    graph.grid(row = 0,
+               rowspan = 3,
+               column = 3,
+               columnspan = 1,
+               pady=0,
+               padx=10)
+
+    self.sso_graph(graph)
+
+  def set_idp_name(self,value):
+    self.idp_name.set(value)
+
+  def set_radius_ok(self, value):
+    self.radius_ok.set(int(value))
+
+  def set_radius_fail(self, value):
+    self.radius_fail.set(int(value))
+
+  def set_sso_ok(self, value):
+    self.sso_ok.set(int(value))
+
+  def set_sso_fail(self, value):
+    self.sso_fail.set(int(value))
+
+  def radius_graph(self, per):
+    # the figure that will contain the plot
+    fig = Figure(figsize = (5.5, 1.0),
+                 dpi = 100)
+
+    # adding the subplot
+    self.radius_plot = fig.add_subplot(111)
+
+    # creating the Tkinter canvas
+    # containing the Matplotlib figure
+    self.radius_canvas = FigureCanvasTkAgg(fig,
+                               master = per)
+
+    # placing the canvas on the Tkinter window
+    self.radius_canvas.get_tk_widget().pack()
+
+  def sso_graph(self, per):
+    # the figure that will contain the plot
+    fig = Figure(figsize = (5.5, 1.0),
+                 dpi = 100)
+
+    # adding the subplot
+    self.sso_plot = fig.add_subplot(111)
+
+    # creating the Tkinter canvas
+    # containing the Matplotlib figure
+    self.sso_canvas = FigureCanvasTkAgg(fig,
+                               master = per)
+
+    # placing the canvas on the Tkinter window
+    self.sso_canvas.get_tk_widget().pack()
+
+  def plot_radius_graph(self,data_ok,data_fail):
+    self.radius_plot.clear()
+    self.radius_plot.plot(data_ok, 'g.-')
+    self.radius_plot.plot(data_fail, 'r.-')
+    self.radius_canvas.draw()
+
+  def plot_sso_graph(self,data_ok,data_fail):
+    self.sso_plot.clear()
+    self.sso_plot.plot(data_ok, 'g.-')
+    self.sso_plot.plot(data_fail, 'r.-')
+    self.sso_canvas.draw()
+
+config = configparser.ConfigParser()
+config.read('config.ini')
+
+def update_stat_data(service, data_type, msg):
+  if service == 'RADIUS' and data_type == 'OK' :
+    radius_data_ok.append(int(msg))
+    if len(radius_data_ok) > 300:
+      radius_data_ok.pop(0)
+    wg.plot_radius_graph(radius_data_ok, radius_data_fail)
+  if service == 'RADIUS' and data_type == 'FAIL' :
+    radius_data_fail.append(int(msg))
+    if len(radius_data_fail) > 300:
+      radius_data_fail.pop(0)
+    wg.plot_radius_graph(radius_data_ok, radius_data_fail)
+  if service == 'SSO' and data_type == 'OK' :
+    sso_data_ok.append(int(msg))
+    if len(sso_data_ok) > 300:
+      sso_data_ok.pop(0)
+    wg.plot_sso_graph(sso_data_ok, sso_data_fail)
+  if service == 'SSO' and data_type == 'FAIL' :
+    sso_data_fail.append(int(msg))
+    if len(sso_data_fail) > 300:
+      sso_data_fail.pop(0)
+    wg.plot_sso_graph(sso_data_ok, sso_data_fail)
+  else:
+    pass   
+
+def start_mqtt_client():
+  client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION1,config['MQTT']['CLIENT_ID'])
+  client.username_pw_set(config['MQTT']['UID'], config['MQTT']['PWD'])
+  client.on_connect = mqtt_on_connect
+  client.on_message = mqtt_on_message
+  client.connect(config['MQTT']['BROKER'], int(config['MQTT']['PORT']))
+  return client
+
+def mqtt_on_connect(client, userdata, flags, rc):
+  if rc == 0:
+    print(f"Connected with result code {rc}")
+    print(f"Subscribe to topic {config['MQTT']['TOPIC']}")
+    client.subscribe(config['MQTT']['TOPIC'])
+  else:
+    print("Failed to connect, return code %d\n", rc)
+    exit(-1)
+
+def mqtt_on_message(client, userdata, message):
+  mqtt_root_path = config['MQTT']['TOPIC'][:-1]
+  msg_topic = message.topic
+  msg_payload = str(message.payload.decode("utf-8"))
+
+  print('Message -> '+msg_topic+' : '+msg_payload+"\n")
+    
+  if msg_topic == mqtt_root_path+'RADIUS/OK' :
+    print('ok : '+msg_payload+"\n")
+    wg.set_radius_ok(msg_payload)
+    update_stat_data('RADIUS', 'OK', msg_payload)
+  if msg_topic == mqtt_root_path+'RADIUS/FAIL' :
+    print('fail : '+msg_payload+"\n")
+    wg.set_radius_fail(msg_payload)
+    update_stat_data('RADIUS', 'FAIL', msg_payload)
+  if msg_topic == mqtt_root_path+'SSO/OK' :
+    print('ok : '+msg_payload+"\n")
+    wg.set_sso_ok(msg_payload)
+    update_stat_data('SSO', 'OK', msg_payload)
+  if msg_topic == mqtt_root_path+'SSO/FAIL' :
+    print('fail : '+msg_payload+"\n")
+    wg.set_sso_fail(msg_payload)
+    update_stat_data('SSO', 'FAIL', msg_payload)
+
+radius_data_ok =[]
+radius_data_fail =[]
+sso_data_ok =[]
+sso_data_fail =[]
+
+mqtt_client = start_mqtt_client()
+mqtt_client.loop_start()
+
+root = ttk.Window(title=config['APP']['TITLE'],
+                  themename = config['APP']['THEME'],
+                  size = [int(config['APP']['SIZE_x']),int(config['APP']['SIZE_Y'])] )
+root.position_center()
+
+wg = Win_GUI(root)
+wg.set_idp_name('IdP Statistic for '+ re.search("(?s:.*)\/(.+)", config['MQTT']['TOPIC'][:-2]).group(1))
+
+root.mainloop()
+
