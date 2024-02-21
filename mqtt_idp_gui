@@ -243,6 +243,17 @@ class Win_GUI(ttk.Frame):
 config = configparser.ConfigParser()
 config.read('config.ini')
 
+def check_env():
+  global config
+  config['MQTT']['BROKER'] = os.environ.get("MQTT_BROKER", config['MQTT']['BROKER'])
+  config['MQTT']['PORT'] = os.environ.get("MQTT_PORT", config['MQTT']['PORT'])
+  config['MQTT']['CLIENT_ID'] = os.environ.get("MQTT_CLIENT_ID", config['MQTT']['CLIENT_ID'])
+  config['MQTT']['UID'] = os.environ.get("MQTT_UID", config['MQTT']['UID'])
+  config['MQTT']['PWD'] = os.environ.get("MQTT_PWD", config['MQTT']['PWD'])
+  config['MQTT']['TOPIC'] = os.environ.get("MQTT_TOPIC", config['MQTT']['TOPIC'])
+  
+check_env()
+
 def update_stat_data(service, data_type, msg):
   if service == 'RADIUS' and data_type == 'OK' :
     radius_data_ok.append(int(msg))
