@@ -333,7 +333,7 @@ root = ttk.Window(title=config['APP']['TITLE'],
 root.position_center()
 
 wg = Win_GUI(root)
-wg.set_idp_name('IdP Statistic for '+ re.search("(?s:.*)\/(.+)", config['MQTT']['TOPIC'][:-2]).group(1))
+wg.set_idp_name('IdP Statistic for '+ re.search("(?s:.*)/(.+)", config['MQTT']['TOPIC'][:-2]).group(1))
 
 root.mainloop()
 
