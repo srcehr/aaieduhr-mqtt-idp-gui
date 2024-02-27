@@ -16,7 +16,7 @@ python -m pip install git+https://github.com/israel-dryer/ttkbootstrap
 python -m pip install -U matplotlib
 ```
 ## Dohvat klijenta
-Programska podrška klijenta se dohvača narebom `git clone git@gitlab.srce.hr:aai-eduhr/aaieduhr-mqtt-idp-gui.git` koja će napraviti odgovarajući direktorij i u njega prenjeti sve datoteke.
+Programska podrška klijenta se dohvača narebom `git clone https://github.com/srcehr/aaieduhr-mqtt-idp-gui.git` koja će napraviti odgovarajući direktorij i u njega prenjeti sve datoteke.
 ## Konfiguriranje
 Svi potrebni podaci koje je potrebno prilagoditi unose se u datoteku config.ini (koju je potrebno kreirati kopiranjem datoteke config.ini.example).
 Reci u kojima se unose konfiguracijski podaci (grupa MQTT) su slijedeci :
