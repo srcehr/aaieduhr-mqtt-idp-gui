@@ -15,7 +15,7 @@ python -m pip install git+https://github.com/eclipse/paho.mqtt.python
 python -m pip install git+https://github.com/israel-dryer/ttkbootstrap
 python -m pip install -U matplotlib
 ```
-## Dohvačanje klijenta
+## Dohvat klijenta
 Programska podrška klijenta se dohvača narebom `git clone git@gitlab.srce.hr:aai-eduhr/aaieduhr-mqtt-idp-gui.git` koja će napraviti odgovarajući direktorij i u njega prenjeti sve datoteke.
 ## Konfiguriranje
 Svi potrebni podaci koje je potrebno prilagoditi unose se u datoteku config.ini (koju je potrebno kreirati kopiranjem datoteke config.ini.example).
@@ -44,6 +44,8 @@ MQTT_UID=<user_name>
 MQTT_PWD=<password>
 MQTT_TOPIC=<topic>
 ```
+Podatke za konfiguriranje izdaje web aplikacija [administracija.aaiedu.hr](https://administracija.aaiedu.hr/) prilikom odabira opcije `Statistika`.
+
 ## Pokretanje
 Pokretanje klijenta se izvodi na način da se pozicija aktivnog direktorija postavi na direktorij u koji je programska podrška klijenta dohvačena (uobičajno naziv direktorija će biti `aaieduhr-mqtt-idp-gui`), te se u njemu izvede naredba 
 ```
