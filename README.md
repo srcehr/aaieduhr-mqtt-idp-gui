@@ -60,6 +60,6 @@ chmod 755 aaieduhr-mqtt-idp-gui
 Klijent je dostupna u obliku Docker kontejnera na URL-u https://hub.docker.com/r/srcehr/aaieduhr-mqtt-idp-gui-docker-image
 ## Kontakt
 Sve informacije o programskoj podrsci moguće je dobiti na aai@srce.hr .
-## Licensa
-Programska podrška u ovom git projektu distribuira se po pravilima EUPL v1.2 ili vise license, a dodatni paketi nose s sobom svoje license koje su kompatibilne s EUPL v1.2 ili više, nositelj komercijalnih prava je Srce, Sveučilište u Zagrebu, Sveučilišni računski centar, autor je Dubravko Penezić, 2023, 2024.   
+## Licenca
+Programska podrška u ovom git projektu distribuira se po pravilima EUPL v1.2 ili vise licence, a dodatni paketi nose s sobom svoje licence koje su kompatibilne s EUPL v1.2 ili više, nositelj komercijalnih prava je Srce, Sveučilište u Zagrebu, Sveučilišni računski centar, autor je Dubravko Penezić, 2023, 2024.   
 
