@@ -56,6 +56,8 @@ na Linux OS-u moguće je izvršiti slijedeći slčijed naredbi :
 chmod 755 aaieduhr-mqtt-idp-gui
 ./aaieduhr-mqtt-idp-gui
 ```
+## Docker image
+Klijent je dostupna u obliku Docker kontejnera na URL-u https://hub.docker.com/r/srcehr/aaieduhr-mqtt-idp-gui-docker-image
 ## Kontakt
 Sve informacije o programskoj podrsci moguće je dobiti na aai@srce.hr .
 ## Licensa
